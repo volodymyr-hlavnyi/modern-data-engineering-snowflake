@@ -1,14 +1,42 @@
 # Import Python packages
+
 import streamlit as st
 import altair as alt
+from snowflake.snowpark import Session
 from snowflake.snowpark.context import get_active_session
 
+import os
+from dotenv import load_dotenv
+from os.path import dirname, join, abspath
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+DOTENV_PATH = join(ROOT_DIR, '.env')
+load_dotenv(DOTENV_PATH)
+
+ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
+USER = os.getenv("SNOWFLAKE_USER")
+PASSWORD = os.getenv("SNOWFLAKE_PASSWORD")
+ROLE = os.getenv("SNOWFLAKE_ROLE", "ACCOUNTADMIN")
+WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH")
+
+# Define Snowflake connection parameters
+connection_parameters = {
+    "account": ACCOUNT,
+    "user": USER,
+    "password": PASSWORD,
+    "role": ROLE,
+    "warehouse": WAREHOUSE,
+}
+
+# Create a Snowflake session
+session = Session.builder.configs(connection_parameters).create()
+
 # Get the current credentials
-session = get_active_session()
+active_session = get_active_session()
 
 # Create references to the tables
-monthly_cpi_table = session.table("wages_cpi.data.monthly_cpi_usa")
-annual_wages_cpi_table = session.table("wages_cpi.data.annual_wages_cpi_usa")
+monthly_cpi_table = active_session.table("wages_cpi.data.monthly_cpi_usa")
+annual_wages_cpi_table = active_session.table("wages_cpi.data.annual_wages_cpi_usa")
 
 # Fetch data from Snowflake tables
 monthly_cpi_data = monthly_cpi_table.to_pandas()
