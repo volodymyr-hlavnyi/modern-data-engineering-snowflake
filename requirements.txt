@@ -1,7 +1,11 @@
 snowflake-connector-python==3.15.0
+snowflake-snowpark-python==1.32.0
+snowflake-connector-python[pandas]==3.15.0
+streamlit==1.45.1
+
+#
 snowflake-cli==3.9.1
 altair~=5.5.0
-snowflake-snowpark-python
-snowflake-connector-python[pandas]
-streamlit
+
+#
 python-dotenv==1.0.1
